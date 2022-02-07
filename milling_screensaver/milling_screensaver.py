@@ -180,7 +180,7 @@ while running:
         trajectory_way.append((axis.point_x, axis.point_y))
 
         for point in trajectory_way:
-            screen.set_at([int(point[0]), int(point[1])], RED)
+            screen.set_at((round(point[0]), round(point[1])), RED)
 
         if from_left_to_right:
             if axis.center_x > RESOLUTION[0] + 400:

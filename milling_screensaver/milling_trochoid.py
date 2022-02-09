@@ -134,7 +134,7 @@ while running:
         tool_point_x = RESOLUTION[0] + 400
         speed_coeff *= -1.0
 
-    tool_point_x = 0
+    tool_point_x = -100
 
     if clockwise_rotation:
         angle_coeff *= -1.0
@@ -147,9 +147,9 @@ while running:
         angle_coeff = -5.0
 
     # Creating objects
-    axis = EccentricityAxis(center_x=tool_point_x, center_y=tool_point_y, angle=0.0, eccentricity_radius=eccentricity)
-    axis2 = EccentricityAxis(center_x=axis.point_x, center_y=axis.point_y, angle=0.0, eccentricity_radius=100.0)
-    mill = Mill(center_x=axis.center_x, center_y=axis.center_y, angle=0.0, nplates=nplates)
+    axis = EccentricityAxis(center_x=tool_point_x, center_y=tool_point_y, angle=0.0, eccentricity_radius=100.0)
+    axis1 = EccentricityAxis(center_x=axis.point_x, center_y=axis.point_y, angle=0.0, eccentricity_radius=eccentricity)
+    mill = Mill(center_x=axis1.point_x, center_y=axis1.point_x, angle=0.0, nplates=nplates)
 
     # Making stage cycle
     stage = True
@@ -169,22 +169,23 @@ while running:
 
         # Drawing
 
-        axis.angle += angle_coeff
+        axis.angle -= angle_coeff * 0.125
         axis.center_x += speed_coeff
         axis.apply_params()
 
-        axis2.angle += angle_coeff * 0.125
-        axis2.center_x += speed_coeff
-        axis2.apply_params()
+        axis1.angle += angle_coeff
+        axis1.center_x = axis.point_x
+        axis1.center_y = axis.point_y
+        axis1.apply_params()
 
         mill.draw_plates(BLACK)
         mill.angle += angle_coeff
-        mill.center_x = axis2.point_x
-        mill.center_y = axis2.point_y
+        mill.center_x = axis1.point_x
+        mill.center_y = axis1.point_y
         mill.apply_params()
         mill.draw_plates()
 
-        trajectory_way.append((axis2.point_x, axis2.point_y))
+        trajectory_way.append((axis1.point_x, axis1.point_y))
 
         for point in trajectory_way:
             screen.set_at((round(point[0]), round(point[1])), RED)
